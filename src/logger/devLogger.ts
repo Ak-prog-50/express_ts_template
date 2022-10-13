@@ -10,7 +10,7 @@ const devLogger = () => {
     level: "debug",
     format: combine(
       format.colorize(),
-      label({ label: "dev_local_logger" }),
+      label({ label: "dev_logger" }),
       timestamp({ format: "HH:mm:ss" }),
       myFormat,
     ),
