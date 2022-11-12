@@ -2,8 +2,8 @@ import express from "express";
 import mongoose from "mongoose";
 import { GET_DB_URL, winston_format } from "./config";
 import logger from "./logger";
-import { IRequest } from "./types/IRequest";
-import { IResponse } from "./types/IResponse";
+import { IRequest } from "./types/vendor/IRequest";
+import { IResponse } from "./types/vendor/IResponse";
 const { PORT } = process.env;
 const app = express();
 
