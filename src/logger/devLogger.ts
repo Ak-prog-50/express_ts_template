@@ -7,7 +7,7 @@ const myFormat = printf(({ level, message, timestamp }) => {
 
 const devLogger = () => {
   return createLogger({
-    level: "debug",
+    level: "silly",
     format: combine(
       format.colorize(),
       label({ label: "dev_logger" }),

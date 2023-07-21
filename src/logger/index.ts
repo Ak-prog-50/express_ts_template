@@ -5,6 +5,16 @@ import { NODE_ENVS } from "../config";
 import devLogger from "./devLogger";
 import prodLogger from "./prodLogger";
 
+// {
+//   error: 0,
+//   warn: 1,
+//   info: 2,
+//   http: 3,
+//   verbose: 4,
+//   debug: 5,
+//   silly: 6
+// }
+
 let logger: winston.Logger | null = null;
 
 if (process.env.NODE_ENV === NODE_ENVS.dev) {
