@@ -15,12 +15,12 @@ import prodLogger from "./prodLogger";
 //   silly: 6
 // }
 
-let logger: winston.Logger | null = null;
+let logger: winston.Logger;
 
 if (process.env.NODE_ENV === NODE_ENVS.dev) {
   logger = devLogger();
 } else if (process.env.NODE_ENV === NODE_ENVS.prod) {
   logger = prodLogger();
-}
+} else throw new Error("NODE_ENV not set");
 
 export default logger;
