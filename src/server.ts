@@ -30,8 +30,7 @@ app.get("/", (req: IRequest, res: IResponse) => {
   return res.status(200).json({ message: "Server is Running" });
 });
 
-const router = express.Router();
-app.use("/user", userRouter(router));
+app.use("/user", userRouter());
 
 app.all("*", (req: IRequest, res: IResponse, next: NextFunction): void => {
   appErrorHandler(AppError.notFound("Route not found"), req, res, next);

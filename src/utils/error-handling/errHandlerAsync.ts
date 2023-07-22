@@ -11,11 +11,11 @@ import logger from "../../logger";
  * const [result, unHandledErr] = await errHandlerAsync(promise);
  * if (unHandledErr) console.error(unHandledErr)
  */
-async function errHandlerAsync(
-  functionCallPromise: Promise<any>,
+async function errHandlerAsync<T>(
+  functionCallPromise: Promise<T>,
   logError = true,
   logMsg = "caught error",
-): Promise<[unknown, unknown]> {
+): Promise<[T | null, unknown]> {
   try {
     const result = await functionCallPromise;
     return [result, null];

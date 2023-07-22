@@ -3,26 +3,34 @@ import { TExpressCallback } from "../types/expressTypes";
 import AppResponse from "../utils/AppResponse";
 import AppError from "../utils/error-handling/AppErrror";
 import errHandlerAsync from "../utils/error-handling/errHandlerAsync";
-import { isIinteractorReturn } from "../types/generalTypes";
+import { IinteractorReturn, isIinteractorReturn } from "../types/generalTypes";
 import appErrorHandler from "../utils/error-handling/appErrorHandler";
-import userDB from "../data-access/user.db";
+import { saveUser } from "../data-access/user.db";
+import { validateStrings } from "../utils/validateReqProperties";
+import { IUserDocument } from "../data-access/models/userModel";
 
 function makeCreateUserController(): TExpressCallback {
   return async (req, res, next) => {
-    const { username, password } = req.body;
+    let { username, password, email } = req.body;
+    const inputStrings: (string | undefined)[] = [username, password, email];
+    if (!validateStrings(inputStrings)) {
+      AppError.badRequest("Invalid request");
+      return;
+    }
+    [username, password, email] = inputStrings;
+
     const createUserDB = {
-      saveUser: userDB.saveUser,
+      saveUser,
     };
-    const [result, unHandledErr] = await errHandlerAsync(
-      createUserInteractor(username, password, createUserDB),
+    const [result, unHandledErr] = await errHandlerAsync<IinteractorReturn<IUserDocument>>(
+      createUserInteractor(username, password, email, createUserDB),
     );
     if (unHandledErr) {
       appErrorHandler(unHandledErr, req, res, next);
       return;
     } else if (isIinteractorReturn(result)) {
-      const { appError, sucessData } = result;
-      if (appError === null && sucessData !== null) {
-        const { createdUser } = sucessData as { createdUser: any };
+      const { appError, sucessData: createdUser } = result;
+      if (appError === null && createdUser !== null) {
         AppResponse.created(res, "User created", createdUser);
         return;
       }

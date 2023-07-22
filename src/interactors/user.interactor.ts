@@ -1,18 +1,27 @@
-import { IinteractorReturn, TRequestProperty } from "../types/generalTypes";
+import { IUserDocument } from "../data-access/models/userModel";
+import { TSaveUser } from "../data-access/user.db";
+import { User } from "../domain/User";
+import { UserAvatarService } from "../services/userAvatarService";
+import { IinteractorReturn } from "../types/generalTypes";
 import AppError from "../utils/error-handling/AppErrror";
 
 interface ICreateUserDB {
-  saveUser(): Promise<unknown>;
+  saveUser: TSaveUser;
 }
 
 async function createUser(
-  username: TRequestProperty,
-  password: TRequestProperty,
+  username: string,
+  password: string,
+  email: string,
   createUserDB: ICreateUserDB,
-): Promise<IinteractorReturn> {
+): Promise<IinteractorReturn<IUserDocument>> {
+  const avatarUrl = await UserAvatarService.generateUserAvatar(email);
+
+  const user = new User(username, email, avatarUrl);
+  const createdUser: IUserDocument = await createUserDB.saveUser(user);
   return {
     appError: null,
-    sucessData: null,
+    sucessData: createdUser,
   };
 }
 

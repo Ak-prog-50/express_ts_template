@@ -1,9 +1,10 @@
 import AppError from "../utils/error-handling/AppErrror";
 
 type TRequestProperty = string | undefined;
-interface IinteractorReturn {
+
+interface IinteractorReturn<T = unknown> {
   appError: AppError | null;
-  sucessData: unknown | null;
+  sucessData: T | null;
 }
 
 function isIinteractorReturn(value: any): value is IinteractorReturn {
