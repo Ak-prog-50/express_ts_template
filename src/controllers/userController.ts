@@ -3,7 +3,7 @@ import { TExpressCallback } from "../types/expressTypes";
 import AppResponse from "../utils/AppResponse";
 import AppError from "../utils/error-handling/AppErrror";
 import errHandlerAsync from "../utils/error-handling/errHandlerAsync";
-import { isTInteractorReturn } from "../types/generalTypes";
+import { isIinteractorReturn } from "../types/generalTypes";
 import appErrorHandler from "../utils/error-handling/appErrorHandler";
 
 function makeCreateUserController(): TExpressCallback {
@@ -18,14 +18,15 @@ function makeCreateUserController(): TExpressCallback {
     if (unHandledErr) {
       appErrorHandler(unHandledErr, req, res, next);
       return;
-    } else if (isTInteractorReturn(result)) {
-      if (result === null) {
+    } else if (isIinteractorReturn(result)) {
+      const { appError } = result;
+      if (appError === null) {
         const createdUser = {};
         AppResponse.created(res, "User created", createdUser);
         return;
       }
-      if (result instanceof AppError) {
-        appErrorHandler(result, req, res, next);
+      if (appError instanceof AppError) {
+        appErrorHandler(appError, req, res, next);
         return;
       }
     }

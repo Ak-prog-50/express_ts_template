@@ -1,10 +1,17 @@
 import AppError from "../utils/error-handling/AppErrror";
 
 type TRequestProperty = string | undefined;
-type TInteractorReturn = AppError | null;
-
-function isTInteractorReturn(value: any): value is TInteractorReturn {
-  return value === null || value instanceof AppError;
+interface IinteractorReturn {
+  appError: AppError | null;
+  sucessData: unknown | null;
 }
 
-export { TRequestProperty, TInteractorReturn, isTInteractorReturn };
+function isIinteractorReturn(value: any): value is IinteractorReturn {
+  return (
+    typeof value === "object" &&
+    (value.appError === null || value.appError instanceof AppError) &&
+    (value.successData === null || typeof value.successData !== "undefined")
+  );
+}
+
+export { TRequestProperty, IinteractorReturn, isIinteractorReturn };

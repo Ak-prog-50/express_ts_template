@@ -1,4 +1,4 @@
-import { TInteractorReturn, TRequestProperty } from "../types/generalTypes";
+import { IinteractorReturn, TRequestProperty } from "../types/generalTypes";
 import AppError from "../utils/error-handling/AppErrror";
 
 interface ICreateUserDB {
@@ -9,8 +9,11 @@ async function createUser(
   username: TRequestProperty,
   password: TRequestProperty,
   createUserDB: ICreateUserDB,
-): Promise<TInteractorReturn> {
-  return null;
+): Promise<IinteractorReturn> {
+  return {
+    appError: null,
+    sucessData: null,
+  };
 }
 
 export { createUser };
