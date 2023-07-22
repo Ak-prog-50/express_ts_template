@@ -1,10 +1,16 @@
-import { User } from "../domain/User";
+import { User } from '../domain/User';
+import { IUserDocument, UserModel } from './models/UserModel';
 
 class UserRepository {
-  async save(user: User): Promise<User> {
-    // Implementation of saving the user to the database using a data mapper or ORM
-    // For simplicity, we'll assume a synchronous save operation and return the user.
-    return user;
+  async save(user: User): Promise<IUserDocument> {
+    const userDocument = new UserModel({
+      name: user.name,
+      email: user.email,
+      avatarUrl: user.avatarUrl,
+      createdAt: user.createdAt,
+    });
+    await userDocument.save();
+    return userDocument;
   }
 }
 
