@@ -5,12 +5,13 @@ import AppError from "../utils/error-handling/AppErrror";
 import errHandlerAsync from "../utils/error-handling/errHandlerAsync";
 import { isIinteractorReturn } from "../types/generalTypes";
 import appErrorHandler from "../utils/error-handling/appErrorHandler";
+import userDB from "../data-access/user.db";
 
 function makeCreateUserController(): TExpressCallback {
   return async (req, res, next) => {
     const { username, password } = req.body;
     const createUserDB = {
-      saveUser: () => console.log("saving user"),
+      saveUser: userDB.saveUser,
     };
     const [result, unHandledErr] = await errHandlerAsync(
       createUserInteractor(username, password, createUserDB),
@@ -19,9 +20,9 @@ function makeCreateUserController(): TExpressCallback {
       appErrorHandler(unHandledErr, req, res, next);
       return;
     } else if (isIinteractorReturn(result)) {
-      const { appError } = result;
-      if (appError === null) {
-        const createdUser = {};
+      const { appError, sucessData } = result;
+      if (appError === null && sucessData !== null) {
+        const { createdUser } = sucessData as { createdUser: any };
         AppResponse.created(res, "User created", createdUser);
         return;
       }

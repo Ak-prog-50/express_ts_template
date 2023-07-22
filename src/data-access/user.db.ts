@@ -1,10 +1,12 @@
-import User from "../data-access/models/exModel";
+import UserModel from "../data-access/models/exModel";
 
 async function saveUser() {
-  const createdUser = new User({
+  const createdUser = new UserModel({
     name: "test",
     email: "XXXXXXXXXXXXX",
     // etc..
   });
-  await createdUser.save();
+  return await createdUser.save();
 }
+
+export default { saveUser };

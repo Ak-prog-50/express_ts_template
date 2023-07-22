@@ -2,7 +2,7 @@ import { IinteractorReturn, TRequestProperty } from "../types/generalTypes";
 import AppError from "../utils/error-handling/AppErrror";
 
 interface ICreateUserDB {
-  saveUser(): void;
+  saveUser(): Promise<unknown>;
 }
 
 async function createUser(

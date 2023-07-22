@@ -1,13 +1,12 @@
 import express, { NextFunction } from "express";
-import mongoose from "mongoose";
 import cors from "cors";
-import { GET_DB_URL, GET_FRONTEND_URL, winston_format } from "./config";
-import logger from "./logger";
+import { GET_FRONTEND_URL } from "./config";
 import { IRequest } from "./types/vendor/IRequest";
 import { IResponse } from "./types/vendor/IResponse";
 import userRouter from "./routes/userRouter";
 import AppError from "./utils/error-handling/AppErrror";
 import appErrorHandler from "./utils/error-handling/appErrorHandler";
+import { dbConnect } from "./services/database";
 const { PORT } = process.env;
 const app = express();
 
@@ -38,12 +37,12 @@ app.all("*", (req: IRequest, res: IResponse, next: NextFunction): void => {
   appErrorHandler(AppError.notFound("Route not found"), req, res, next);
 });
 
-mongoose
-  .connect(GET_DB_URL())
-  .then(() => {
-    logger.info("DB connected");
+// Start database connection and server
+if (require.main === module) {
+  (async function () {
+    await dbConnect();
     app.listen(PORT, () => {
-      logger.info("Server is running");
+      console.info(`Server is running on port ${PORT}`);
     });
-  })
-  .catch((err) => logger.error("DB connection error", err));
+  })();
+}
