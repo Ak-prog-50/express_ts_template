@@ -1,5 +1,4 @@
 import { createUser as createUserInteractor } from "../interactors/user.interactor";
-import { TExpressCallback } from "../types/expressTypes";
 import AppResponse from "../utils/AppResponse";
 import AppError from "../utils/error-handling/AppErrror";
 import errHandlerAsync from "../utils/error-handling/errHandlerAsync";
@@ -8,45 +7,43 @@ import appErrorHandler from "../utils/error-handling/appErrorHandler";
 import { saveUser } from "../data-access/user.db";
 import { validateStrings } from "../utils/validateReqProperties";
 import { IUserDocument } from "../data-access/models/userModel";
+import { TExpressAsyncCallback } from "../types/expressTypes";
 
 /**
- * Factory function to create an Express middleware that handles the creation of a user.
- * @returns {TExpressCallback} An Express middleware function that will be passed into 'create-user' route.
+ * @type {TExpressAsyncCallback} An Express middleware function that will be passed into 'create-user' route.
  */
-function makeCreateUserController(): TExpressCallback {
-  return async (req, res, next) => {
-    let { username, password, email } = req.body;
+const createUserController: TExpressAsyncCallback = async (req, res, next) => {
+  let { username, password, email } = req.body;
 
-    // validating req.body properties
-    const inputStrings: (string | undefined)[] = [username, password, email];
-    if (!validateStrings(inputStrings)) {
-      AppError.badRequest("Invalid request");
-      return;
-    }
-    [username, password, email] = inputStrings;
+  // validating req.body properties
+  const inputStrings: (string | undefined)[] = [username, password, email];
+  if (!validateStrings(inputStrings)) {
+    AppError.badRequest("Invalid request");
+    return;
+  }
+  [username, password, email] = inputStrings;
 
-    // This object containing related db functions will be injected to interactor.
-    const createUserDB = {
-      saveUser,
-    };
-    const [result, unHandledErr] = await errHandlerAsync<
-      IinteractorReturn<IUserDocument>
-    >(createUserInteractor(username, password, email, createUserDB));
-    if (unHandledErr !== null) {
-      appErrorHandler(unHandledErr, req, res, next);
-      return;
-    } else if (result !== null) {
-      const { appError, sucessData: createdUser } = result;
-      if (appError === null && createdUser !== null) {
-        AppResponse.created(res, "User created", createdUser);
-        return;
-      }
-      if (appError instanceof AppError) {
-        appErrorHandler(appError, req, res, next);
-        return;
-      }
-    }
+  // This object containing related db functions will be injected to interactor.
+  const createUserDB = {
+    saveUser,
   };
-}
+  const [result, unHandledErr] = await errHandlerAsync<
+    IinteractorReturn<IUserDocument>
+  >(createUserInteractor(username, password, email, createUserDB));
+  if (unHandledErr !== null) {
+    appErrorHandler(unHandledErr, req, res, next);
+    return;
+  } else if (result !== null) {
+    const { appError, sucessData: createdUser } = result;
+    if (appError === null && createdUser !== null) {
+      AppResponse.created(res, "User created", createdUser);
+      return;
+    }
+    if (appError instanceof AppError) {
+      appErrorHandler(appError, req, res, next);
+      return;
+    }
+  }
+};
 
-export { makeCreateUserController };
+export { createUserController };
